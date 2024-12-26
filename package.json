@@ -13,7 +13,7 @@
     "vite": "^6.0.3"
   },
   "dependencies": {
-    "howler": "^2.2.4",
-    "pixi.js": "^8.6.6"
+    "howler": "^2.2.3",
+    "pixi.js": "^7.0.5"
   }
 }

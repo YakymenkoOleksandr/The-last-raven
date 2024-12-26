@@ -22,7 +22,7 @@ export const allTextureKeys = {
 };
 
 const appTextures = {
-    [allTextureKeys.shipBlue]: 'assets/sprites/enemy/shipBlue.png',
+    [allTextureKeys.shipBlue]: 'assets/sprites/enemys/shipBlue.png',
     [allTextureKeys.shipBlue2]: 'assets/sprites/enemy/shipBlue2.png',
     [allTextureKeys.bomb]: 'assets/sprites/bomb.png',
     [allTextureKeys.musicOn]: 'assets/sprites/ui/music_on.png',
