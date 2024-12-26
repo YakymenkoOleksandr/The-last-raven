@@ -3,12 +3,15 @@ import { lockPlayer } from "../sprites/player";
 
 const appConstants = {
   size: {
-    WIDTH: window.innerWidth ? window.innerWidth : 800,
-        HEIGHT: window.innerHeight ? window.innerHeight : 600,
+    WIDTH: window.innerWidth ? window.innerWidth :  1280,
+        HEIGHT: window.innerHeight ? window.innerHeight : 720,
     
     },
     containers: {
         player: 'player',
+        bullets: 'bullets',
+        enemies: 'enemies',
+        bombs: 'bombs'
     },
     timeouts: {
         playerLock: 2000,

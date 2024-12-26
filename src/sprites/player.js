@@ -16,7 +16,7 @@ export const addPlayer = (currApp, root) => {
     player = new Sprite(getTexture(allTextureKeys.spaceShip))
     player.name = appConstants.containers.player
     player.anchor.set(0.5)
-    player.scale.set(0.3)
+    player.scale.set(0.15)
     player.position.x = appConstants.size.WIDTH / 2
     player.position.y = appConstants.size.HEIGHT - 200
     return player
@@ -42,22 +42,30 @@ export const playerShoots = () => {
 }
 
 export const playerTick = (state) => {
-     if(lockPlayer){
-        player.alpha = 0.5
-     } else {
-        player.alpha = 1
-     }
+    if (lockTimeout) {
+        player.alpha = 0.5;
+    } else {
+        player.alpha = 1;
+    }
 
-     const playerPosition = player.position.x
+    const playerPosition = player.position.x;
 
-     player.position.x = state.mousePosition
+    // Оновлення позиції гравця за допомогою миші
+    player.position.x = state.mousePosition;
 
-     if(player.position.x < playerPosition) {
-        player.rotation = -0.3
-     } else if(player.position.x > playerPosition){
-        player.rotation = 0.3
-     } else {
-        player.rotation = 0
-     }
+    // Перевірка, щоб гравець не виходив за межі екрану (ліва та права межі)
+    if (player.position.x < 20) {
+        player.position.x = 20; // Ліва межа
+    } else if (player.position.x > appConstants.size.WIDTH - 20) {
+        player.position.x = appConstants.size.WIDTH - 20; // Права межа
+    }
 
-}
+    // Обертання гравця в залежності від напрямку руху
+    /*if (player.position.x < playerPosition) {
+        player.rotation = -0.3;
+    } else if (player.position.x > playerPosition) {
+        player.rotation = 0.3;
+    } else {
+        player.rotation = 0;
+    }*/
+};

@@ -1,6 +1,6 @@
 export const allTextureKeys = {
-  shipBlue: "shipBlue",
-  shipBlue2: "shipBlue2",
+  asteroid: "asteroid",
+  wariorSpaseShip: "wariorSpaseShip",
   bomb: "bomb",
   musicOn: "musicOn",
   musicOff: "musicOff",
@@ -22,14 +22,14 @@ export const allTextureKeys = {
 };
 
 const appTextures = {
-    [allTextureKeys.shipBlue]: 'assets/sprites/enemys/shipBlue.png',
-    [allTextureKeys.shipBlue2]: 'assets/sprites/enemy/shipBlue2.png',
+    [allTextureKeys.asteroid]: 'assets/sprites/enemys/asteroid.png',
+    [allTextureKeys.wariorSpaseShip]: 'assets/sprites/enemys/wariorSpaseShip.png',
     [allTextureKeys.bomb]: 'assets/sprites/bomb.png',
     [allTextureKeys.musicOn]: 'assets/sprites/ui/music_on.png',
     [allTextureKeys.musicOff]: 'assets/sprites/ui/music_off.png',
     [allTextureKeys.effectsOn]: 'assets/sprites/ui/volume_on.png',
     [allTextureKeys.effectsOff]: 'assets/sprites/ui/volume_off.png',
-    [allTextureKeys.enemyShip]: 'assets/sprites/enemy/shipBlue.png',
+    [allTextureKeys.enemyShip]: 'assets/sprites/enemys/wariorSpaseShip.png',
     [allTextureKeys.man]: 'assets/sprites/people/man.png',
     [allTextureKeys.man2]: 'assets/sprites/people/man2.png',
     [allTextureKeys.woman]: 'assets/sprites/people/woman.png',
