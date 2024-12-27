@@ -4,6 +4,8 @@ import { Container, AnimatedSprite } from "pixi.js";
 import appConstants from "../common/constants";
 import { addBomb } from "./bombs";
 import { addExposion } from "./explosions";
+import { destroySprite } from "../common/utils";
+import { ufoDestroyed } from "../common/eventHub";
 
 let enemies;
 let app;
@@ -24,6 +26,15 @@ export const initEnemies = (currApp, root) => {
   return enemies;
 };
 
+export const destroyEnemy = (enemy) => {
+  addExposion({ x: enemy.position.x, y: enemy.position.y });
+  destroySprite(enemy)
+  ufoDestroyed()
+  setTimeout(() => {
+    addEnemy();
+  }, 1000);
+};
+
 export const addEnemy = () => {
   const textures = [
     getTexture(allTextureKeys.wariorSpaseShip),
@@ -34,19 +45,15 @@ export const addEnemy = () => {
   enemy.x = randomIntFromInterval(20, appConstants.size.WIDTH - 20);
   enemy.y = 200;
   enemy.animationSpeed = 0.1;
-  enemies.addChild(enemy);
   enemy.scale.set(0.15);
   enemy.lastShotTime = Date.now();
-  return enemy;
-};
 
-export const destroyEnemy = (enemy) => {
-  addExposion({ x: enemy.position.x, y: enemy.position.y})
-  enemies.removeChild(enemy);
- // enemies.destroy({ children: true });
-  setTimeout(() => {
-    addEnemy();
-  }, 1000);
+  enemy.destroyMe = function () {
+    destroyEnemy(this);
+  };
+  enemies.addChild(enemy);
+
+  return enemy;
 };
 
 const randomIntFromInterval = (min, max) => {
@@ -56,9 +63,7 @@ const randomIntFromInterval = (min, max) => {
 export const enemyTick = () => {
   if (!enemies) return; // Якщо вороги ще не додані, виходимо з функції
 
-    const now = Date.now();
-    
-    
+  const now = Date.now();
 
   // Логіка перемикання стану (стояти/рухатися)
   if (isMoving) {
@@ -78,25 +83,23 @@ export const enemyTick = () => {
   if (isMoving) {
     // Перевіряємо позицію кожного ворога
     enemies.children.forEach((enemy) => {
-        enemy.x += MOVE_SPEED * moveDirection;
-        
-        const now = Date.now();
-        if (now - enemy.lastShotTime >= 2000) { // Стріляємо кожні 2 секунди
-            addBomb(enemy.position); // Передаємо позицію ворога як аргумент
-            enemy.lastShotTime = now;
-        }
+      enemy.x += MOVE_SPEED * moveDirection;
 
+      const now = Date.now();
+      if (now - enemy.lastShotTime >= 2000) {
+        // Стріляємо кожні 2 секунди
+        addBomb(enemy.position); // Передаємо позицію ворога як аргумент
+        enemy.lastShotTime = now;
+      }
 
       // Перевірка меж екрану для кожного ворога
       if (enemy.x <= 20) {
         enemy.x = 20; // Залишаємо ворога в межах екрану зліва
         moveDirection = 1; // Міняємо напрямок на вправо
-        
       }
       if (enemy.x >= appConstants.size.WIDTH - 20) {
         enemy.x = appConstants.size.WIDTH - 20; // Залишаємо ворога в межах екрану справа
         moveDirection = -1; // Міняємо напрямок на вліво
-        
       }
     });
   }

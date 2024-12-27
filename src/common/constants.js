@@ -12,7 +12,19 @@ const appConstants = {
         bullets: 'bullets',
         enemies: 'enemies',
         bombs: 'bombs',
-        explosions: 'explosions'
+        explosions: 'explosions',
+        infoPanel: 'infoPanel',
+        
+    },
+    events: {
+        bombDestroyed: 'bombDestroyed',
+        infoUpdated: 'indoUpdated',
+        ufoDestroyed: 'ufoDestroyed',
+        manKilled: 'manKilled',
+        youWin: 'youWin',
+        gameOver: 'gameOver',
+        restartGame: 'restartGame',
+        resetPeople: 'resetPeople',
         
     },
     timeouts: {

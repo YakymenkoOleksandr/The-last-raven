@@ -3,6 +3,8 @@ import appConstants from "../common/constants";
 import { getTexture } from "../common/assets";
 import { allTextureKeys } from "../common/textures";
 import { addExposion } from "./explosions";
+import { destroySprite } from "../common/utils";
+import { bombDestroyed } from "../common/eventHub";
 
 let app; // 2. Створюємо змінну для збереження посилання на застосунок
 let bombs; // 3. Створюємо контейнер для бомб
@@ -37,13 +39,16 @@ export const addBomb = (coord) => {
   bomb.position.set(coord.x, coord.y + 10); // 16. Задаємо місцерозташування бомби
   bomb.rotation = Math.PI; // 18. Повертаємо картинку бомби
   bomb.scale.set(0.3); // 20. МАштабуємо бомбу до необхідних розмірів
+    bomb.destroyMe = function () {
+      destroyEnemy(this);
+    };
   bombs.addChild(bomb); // 19. Додаємо в контейнер
 };
 
 export const destroyBomb = (bomb) => {
   addExposion({ x: bomb.position.x, y: bomb.position.y + 20 })
-  bombs.removeChild(bomb)
-  bomb.destroy({children: true})
+  destroySprite(bomb);
+  bombDestroyed()
 }
 
 export const bombTick = () => {

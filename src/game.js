@@ -17,7 +17,7 @@ import {
   destroyEnemy,
 } from "./sprites/enemy.js";
 import { bombTick, destroyBomb, initBombs } from "./sprites/bombs.js";
-import { checkCollision } from "./common/utils.js";
+import { checkCollision, destroySprite } from "./common/utils.js";
 import { explosionTick, initExplosions } from "./sprites/explosions.js";
 
 const WIDTH = appConstants.size.WIDTH;
@@ -82,26 +82,38 @@ const checkAllCollisions = () => {
 
   if (enemies && bullets) {
     // Перевіряємо чи зіткнулися обєкти противника та кулі
+    const toRemove = [];
     bullets.children.forEach((b) => {
       enemies.children.forEach((e) => {
         if (e && b) {
           if (checkCollision(e, b)) {
-            destroyBullet(b); // Видаляємо кулю
-            destroyEnemy(e); // Видаляємо ворога
+            toRemove.push(b);
+            toRemove.push(e);
+            //    destroyBullet(b); // Видаляємо кулю
+            //    destroyEnemy(e); // Видаляємо ворога
           }
         }
       });
     });
+    toRemove.forEach((sprite) => {
+      sprite.destroyMe()
+    });
   }
   if (bombs && bullets) {
-    // Перевіряємо чи зіткнулися обєкти пострілу противника та пострілу гравця
+      // Перевіряємо чи зіткнулися обєкти пострілу противника та пострілу гравця
+      const toRemove = [];
     bombs.children.forEach((bomb) => {
       bullets.children.forEach((b) => {
-        if (checkCollision(bomb, b)) {
-          destroyBullet(b); // Видаляємо кулю
-          destroyBomb(bomb); // Видаляємо ворога
+          if (checkCollision(bomb, b)) {
+              toRemove.push(b)
+              toRemove.push(bomb)
+        //  destroyBullet(b); // Видаляємо кулю
+        //  destroyBomb(bomb); // Видаляємо ворога
         }
       });
+    });
+      toRemove.forEach((sprite) => {
+      sprite.destroyMe()
     });
   }
   if (player && bombs) {

@@ -1,6 +1,6 @@
 import { AnimatedSprite, Container, Texture } from "pixi.js"
 import appConstants from "../common/constants"
-import { randomIntFromInterval } from "../common/utils"
+import { destroySprite, randomIntFromInterval } from "../common/utils"
 
 let app
 let explosions
@@ -48,7 +48,6 @@ export const explosionTick = () => {
         }
     })
     toRemove.forEach((e) => {
-        explosions.removeChild(e)
-        e.destroy({children: true})
+        destroySprite(e)
     })
 }
