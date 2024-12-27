@@ -3,6 +3,7 @@ import { getTexture } from "../common/assets";
 import { Container, AnimatedSprite } from "pixi.js";
 import appConstants from "../common/constants";
 import { addBomb } from "./bombs";
+import { addExposion } from "./explosions";
 
 let enemies;
 let app;
@@ -40,8 +41,9 @@ export const addEnemy = () => {
 };
 
 export const destroyEnemy = (enemy) => {
+  addExposion({ x: enemy.position.x, y: enemy.position.y})
   enemies.removeChild(enemy);
-  enemies.destroy({ children: true });
+ // enemies.destroy({ children: true });
   setTimeout(() => {
     addEnemy();
   }, 1000);

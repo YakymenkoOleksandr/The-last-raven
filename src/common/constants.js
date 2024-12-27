@@ -11,7 +11,9 @@ const appConstants = {
         player: 'player',
         bullets: 'bullets',
         enemies: 'enemies',
-        bombs: 'bombs'
+        bombs: 'bombs',
+        explosions: 'explosions'
+        
     },
     timeouts: {
         playerLock: 2000,

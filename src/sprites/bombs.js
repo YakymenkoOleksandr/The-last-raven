@@ -2,6 +2,7 @@ import { Container, Sprite } from "pixi.js";
 import appConstants from "../common/constants";
 import { getTexture } from "../common/assets";
 import { allTextureKeys } from "../common/textures";
+import { addExposion } from "./explosions";
 
 let app; // 2. Створюємо змінну для збереження посилання на застосунок
 let bombs; // 3. Створюємо контейнер для бомб
@@ -38,6 +39,12 @@ export const addBomb = (coord) => {
   bomb.scale.set(0.3); // 20. МАштабуємо бомбу до необхідних розмірів
   bombs.addChild(bomb); // 19. Додаємо в контейнер
 };
+
+export const destroyBomb = (bomb) => {
+  addExposion({ x: bomb.position.x, y: bomb.position.y + 20 })
+  bombs.removeChild(bomb)
+  bomb.destroy({children: true})
+}
 
 export const bombTick = () => {
   // 21. Пишемо функцію оновлення бомб
