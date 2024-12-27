@@ -1,6 +1,3 @@
-import { Container } from "pixi.js";
-import { lockPlayer } from "../sprites/player";
-
 const appConstants = {
   size: {
     WIDTH: window.innerWidth ? window.innerWidth :  1280,
@@ -24,12 +21,20 @@ const appConstants = {
         youWin: 'youWin',
         gameOver: 'gameOver',
         restartGame: 'restartGame',
-        resetPeople: 'resetPeople',
+        resetUfo: 'resetUfo',
         
     },
     timeouts: {
         playerLock: 2000,
         playerShoot: 1000,
+    },
+    sounds: {
+        shot: 'shot',
+        miss: 'miss',
+        explosion: 'explosion',
+        gameOver: 'gameOver',
+        youWin: 'youWin',
+        background: 'background',
     },
 };
 

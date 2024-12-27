@@ -25,3 +25,6 @@ export const restartGame = (data) => {
   EventHub.emit(appConstants.events.restartGame, data);
 };
 
+export const resetUfo = (data) => {
+  EventHub.emit(appConstants.events.resetUfo, { count: 4 });
+}

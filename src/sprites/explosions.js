@@ -1,6 +1,7 @@
 import { AnimatedSprite, Container, Texture } from "pixi.js"
 import appConstants from "../common/constants"
 import { destroySprite, randomIntFromInterval } from "../common/utils"
+import { play } from "../common/sound"
 
 let app
 let explosions
@@ -38,6 +39,7 @@ export const addExposion = (coords) => {
     explosion.position.set(coords.x, coords.y)
     explosions.addChild(explosion)
     explosion.play()
+    play(appConstants.sounds.explosion)
 }
 
 export const explosionTick = () => {

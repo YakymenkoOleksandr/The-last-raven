@@ -23,7 +23,7 @@ export const initBombs = (currApp, root) => {
 export const clearBombs = () => {
   // 9. Створюємо функію очистки контейнера для бомб
   const toRemuve = []; // 10. Створюємо масив для збирання бомб
-  bombs.children.array.forEach((b) => {
+  bombs.children.forEach((b) => {
     toRemuve.push(b);
   }); // 11. Додаємо бомби в масив
   toRemuve.forEach((b) => {
@@ -40,8 +40,8 @@ export const addBomb = (coord) => {
   bomb.rotation = Math.PI; // 18. Повертаємо картинку бомби
   bomb.scale.set(0.3); // 20. МАштабуємо бомбу до необхідних розмірів
     bomb.destroyMe = function () {
-      destroyEnemy(this);
-    };
+    destroyBomb(this);
+  };
   bombs.addChild(bomb); // 19. Додаємо в контейнер
 };
 

@@ -1,5 +1,6 @@
 import { AnimatedSprite, Texture, Container, filters } from "pixi.js";
 import appConstants from "../common/constants";
+import { play } from "../common/sound";
 import { destroySprite } from "../common/utils";
 
 let app;
@@ -26,10 +27,10 @@ export const clearBullets = () => {
 };
 
 export const addBullet = (coord) => {
-  // if(timeout){
-  //     //sound
-  //     return
-  // }
+  if (timeout) {
+    play(appConstants.sounds.miss)
+    return;
+  }
 
   const bulletType =
     bulletTypes[Math.floor(Math.random() * bulletTypes.length)];
@@ -66,7 +67,7 @@ export const addBullet = (coord) => {
 
   bullets.addChild(bullet);
   bullet.play();
-  //sound play
+  play(appConstants.sounds.shot)
 
   timeout = setTimeout(() => {
     timeout = null;

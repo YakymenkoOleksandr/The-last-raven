@@ -11,7 +11,7 @@ let app;
 let ufoText;
 let manText;
 
-let ufoCount = 0;
+let ufoCount = 4;
 let manCount = 0;
 
 let musicOff;
@@ -19,6 +19,11 @@ let musicOffStatus = true;
 
 let effectsOff;
 let effectsOffStatus = true;
+
+export const setUfoCount = (count) => {
+  ufoCount = count;
+  ufoText.text = `${ufoCount}`;
+};
 
 const style = new TextStyle({
   fontFamily: "Arial",
@@ -62,22 +67,22 @@ export const initInfo = (currApp, root) => {
 
   const ufo = new Sprite(getTexture(allTextureKeys.enemyShip));
   ufo.anchor.set(0, 0.5);
-  ufo.scale.set(0.3);
+  ufo.scale.set(0.05);
   ufo.name = "ufo";
-  ufo.x = 20;
-  ufo.y = 30;
+  ufo.x = 30;
+  ufo.y = 50;
 
   infoPanel.addChild(ufo);
 
-  ufoText = new Text("0", style);
+  ufoText = new Text("4", style);
   ufoText.anchor.set(0.5);
   ufoText.x = 100;
-  ufoText.y = 30;
+  ufoText.y = 50;
   ufoText.name = "ufotext";
   infoPanel.addChild(ufoText);
 
   ///
-  const man = new Sprite(getTexture(allTextureKeys.man));
+  /*const man = new Sprite(getTexture(allTextureKeys.man));
   man.anchor.set(0, 0.5);
   man.scale.set(0.8);
   man.name = "man";
@@ -91,7 +96,7 @@ export const initInfo = (currApp, root) => {
   manText.x = 100;
   manText.y = 70;
   manText.name = "manText";
-  infoPanel.addChild(manText);
+  infoPanel.addChild(manText);*/
 
   ///
 
@@ -112,9 +117,9 @@ export const initInfo = (currApp, root) => {
 
   musicOff = new Sprite(musicOffStatus ? musicOffTexture : musicOnTexture);
   if (musicOffStatus) {
-    pause(appConstants.sounds.background)
+    pause(appConstants.sounds.background);
   } else {
-      play(appConstants.sounds.background)
+    play(appConstants.sounds.background);
   }
 
   musicOff.x = -9;
@@ -126,9 +131,9 @@ export const initInfo = (currApp, root) => {
     musicOffStatus = !musicOffStatus;
     musicOff.texture = musicOffStatus ? musicOffTexture : musicOnTexture;
     if (musicOffStatus) {
-      pause(appConstants.sounds.background)
+      pause(appConstants.sounds.background);
     } else {
-        play(appConstants.sounds.background)
+      play(appConstants.sounds.background);
     }
   });
   info.addChild(musicButton);
@@ -146,11 +151,13 @@ export const initInfo = (currApp, root) => {
   graphicsEffectsOff.endFill();
   effectsButton.addChild(graphicsEffectsOff);
 
-  effectsOff = new Sprite(effectsOffStatus ? effectsOffTexture : effectsOnTexture);
+  effectsOff = new Sprite(
+    effectsOffStatus ? effectsOffTexture : effectsOnTexture
+  );
   if (effectsOffStatus) {
-    muteEffects()
+    muteEffects();
   } else {
-    unMuteEffects()
+    unMuteEffects();
   }
 
   effectsOff.x = -9;
@@ -160,39 +167,41 @@ export const initInfo = (currApp, root) => {
   effectsButton.interactive = true;
   effectsButton.on("pointertap", () => {
     effectsOffStatus = !effectsOffStatus;
-    effectsOff.texture = effectsOffStatus ? effectsOffTexture : effectsOnTexture
+    effectsOff.texture = effectsOffStatus
+      ? effectsOffTexture
+      : effectsOnTexture;
     if (effectsOffStatus) {
-        muteEffects()
-      } else {
-        unMuteEffects()
-      }
+      muteEffects();
+    } else {
+      unMuteEffects();
+    }
   });
   info.addChild(effectsButton);
 
-  root.addChild(info)
+  root.addChild(info);
 
-  return info
+  return info;
 };
 
 EventHub.on(appConstants.events.manKilled, (event) => {
-    manCount -= 1
-    manText.text = `${manCount}`
-    if(manCount === 0){
-        gameOver()
-    }
-})
+  manCount -= 1;
+  manText.text = `${manCount}`;
+  if (manCount === 0) {
+    gameOver();
+  }
+});
 
 EventHub.on(appConstants.events.ufoDestroyed, (event) => {
-    ufoCount += 1
-    ufoText.text = `${ufoCount}`
-    if(ufoCount === 10){
-        youWin()
-    }
-})
+  ufoCount -= 1;
+  ufoText.text = `${ufoCount}`;
+  if (ufoCount === 0) {
+    youWin();
+  }
+});
 
-EventHub.on(appConstants.events.resetPeople, (event) => {
-    manCount = event.count
-    manText.text = `${manCount}`
-    ufoCount = 0
-    ufoText.text = `${ufoCount}`
-})
+EventHub.on(appConstants.events.resetUfo, (event) => {
+  ufoCount = 4;
+  ufoText.text = `${ufoCount}`;
+});
+
+

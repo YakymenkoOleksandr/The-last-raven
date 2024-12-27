@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { root } from "postcss";
 import { loadAssets } from "./common/assets";
 import appConstants from "./common/constants";
-import { bulletTick, destroyBullet, initBullets } from "./sprites/bullets";
+import { bulletTick, clearBullets, destroyBullet, initBullets } from "./sprites/bullets";
 import {
   addPlayer,
   getPlayer,
@@ -16,9 +16,15 @@ import {
   enemyTick,
   destroyEnemy,
 } from "./sprites/enemy.js";
-import { bombTick, destroyBomb, initBombs } from "./sprites/bombs.js";
+import { bombTick, clearBombs, destroyBomb, initBombs } from "./sprites/bombs.js";
 import { checkCollision, destroySprite } from "./common/utils.js";
 import { explosionTick, initExplosions } from "./sprites/explosions.js";
+import { initInfo } from "./sprites/infoPanel.js";
+import { EventHub, resetUfo } from "./common/eventHub.js";
+import { play } from "./common/sound";
+import { getYouWin, getGameOver } from "./sprites/messages.js";
+import { setUfoCount } from './sprites/infoPanel'
+
 
 const WIDTH = appConstants.size.WIDTH;
 const HEIGHT = appConstants.size.HEIGHT;
@@ -54,6 +60,8 @@ const createScene = () => {
   background.height = HEIGHT;
 
   rootContainer.addChild(background);
+
+  initInfo(app, rootContainer);
 
   const bullets = initBullets(app, rootContainer);
   rootContainer.addChild(bullets);
@@ -165,3 +173,36 @@ export const initGame = () => {
     }
   });
 };
+
+
+const restartGame = () => {
+  clearBombs()
+  clearBullets() 
+  resetUfo()
+
+}
+
+EventHub.on(appConstants.events.youWin, () => {
+  gameState.app.ticker.stop()
+  rootContainer.addChild(getYouWin())
+  setTimeout(()=>play(appConstants.sounds.youWin), 1000)
+})
+
+EventHub.on(appConstants.events.gameOver, () => {
+  gameState.app.ticker.stop()
+  rootContainer.addChild(getGameOver())
+  setTimeout(()=>play(appConstants.sounds.gameOver), 1000)
+})
+
+EventHub.on(appConstants.events.restartGame, (event) => {
+  
+  restartGame()
+  if(event === appConstants.events.gameOver){
+    rootContainer.removeChild(getGameOver())
+
+  }
+  if(event === appConstants.events.youWin){
+    rootContainer.removeChild(getYouWin())
+  }
+  gameState.app.ticker.start()
+})
