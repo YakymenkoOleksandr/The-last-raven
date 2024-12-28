@@ -20,30 +20,31 @@ const style = new TextStyle({
 });
 
 // Вікно сповіщення про програш
-const gameOverMessages = new Container();
-gameOverMessages.interactive = true;
+const gameOverMessage = new Container();
+gameOverMessage.interactive = true;
 
 const graphics = new Graphics();
 graphics.lineStyle(1, 0xff00ff, 1);
 graphics.beginFill(0x650a5a, 0.25);
 graphics.drawRoundedRect(0, 0, 250, 100, 16);
 graphics.endFill();
-gameOverMessages.addChild(graphics)
 
-const text = new Text('Game Over', style)
-text.anchor.set(0.5)
-text.x = 250 / 2
-text.y = 100 / 2
-gameOverMessages.addChild(text)
-gameOverMessages.on('pointertap', () => {
-    restartGame(appConstants.events.gameOver)
-})
+gameOverMessage.addChild(graphics);
+
+const text = new Text("Game Over", style);
+text.anchor.set(0.5);
+text.x = 250 / 2;
+text.y = 100 / 2;
+gameOverMessage.addChild(text);
+gameOverMessage.on("pointertap", () => {
+  restartGame(appConstants.events.gameOver);
+});
 
 export const getGameOver = () => {
-    gameOverMessages.position.x = appConstants.size.WIDTH / 2 - gameOverMessages.width / 2
-    gameOverMessages.position.y = appConstants.size.HEIGHT / 2 - gameOverMessages.height / 2
-    return gameOverMessages
-}
+  gameOverMessage.position.x = appConstants.size.WIDTH / 2 - gameOverMessage.width / 2;
+  gameOverMessage.position.y = appConstants.size.HEIGHT / 2 - gameOverMessage.height / 2;
+  return gameOverMessage;
+};
 
 // Вікно сповіщення про виграш
 

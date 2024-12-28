@@ -4,15 +4,15 @@ import appConstants from "../common/constants";
 import { EventHub, gameOver, youWin } from "../common/eventHub";
 import { muteEffects, pause, play, unMuteEffects } from "../common/sound";
 import appTextures, { allTextureKeys } from "../common/textures";
+import { getGameOver } from "./messages";
 
 let info;
 let app;
 
 let ufoText;
-let manText;
 
 let ufoCount = 4;
-let manCount = 0;
+
 
 let musicOff;
 let musicOffStatus = true;
@@ -20,6 +20,14 @@ let musicOffStatus = true;
 let effectsOff;
 let effectsOffStatus = true;
 
+export let shootCount = 10;
+let shootText;
+
+let time = 60; 
+let timerText 
+
+
+// Функція для оновлення лічильника ворогів
 export const setUfoCount = (count) => {
   ufoCount = count;
   ufoText.text = `${ufoCount}`;
@@ -80,23 +88,6 @@ export const initInfo = (currApp, root) => {
   ufoText.y = 50;
   ufoText.name = "ufotext";
   infoPanel.addChild(ufoText);
-
-  ///
-  /*const man = new Sprite(getTexture(allTextureKeys.man));
-  man.anchor.set(0, 0.5);
-  man.scale.set(0.8);
-  man.name = "man";
-  man.x = 25;
-  man.y = 70;
-
-  infoPanel.addChild(man);
-
-  manText = new Text("0", style);
-  manText.anchor.set(0.5);
-  manText.x = 100;
-  manText.y = 70;
-  manText.name = "manText";
-  infoPanel.addChild(manText);*/
 
   ///
 
@@ -176,19 +167,103 @@ export const initInfo = (currApp, root) => {
       unMuteEffects();
     }
   });
+
   info.addChild(effectsButton);
 
   root.addChild(info);
-
   return info;
 };
 
-EventHub.on(appConstants.events.manKilled, (event) => {
-  manCount -= 1;
-  manText.text = `${manCount}`;
-  if (manCount === 0) {
-    gameOver();
-  }
+export const initShootCounter = () => {
+  const shootPanel = new Container();
+  shootPanel.position.x = 20; // Розташування на екрані
+  shootPanel.position.y = 530; // Встановлення вертикальної позиції
+
+  const graphics = new Graphics();
+  graphics.lineStyle(1, 0xff00ff, 1);
+  graphics.beginFill(0x650a5a, 0.25);
+  graphics.drawRoundedRect(0, 0, 150, 100, 16);
+  graphics.endFill();
+  shootPanel.addChild(graphics);
+
+  const bullet = new Sprite(getTexture(allTextureKeys.bulletInfo));
+  bullet.anchor.set(0, 0.5);
+  bullet.scale.set(0.09);
+  bullet.name = "bullet";
+  bullet.x = 30;
+  bullet.y = 45;
+
+  shootPanel.addChild(bullet);
+
+  shootText = new Text(`${shootCount}`, style); // Використовуємо той самий стиль, як і для UFO
+  shootText.anchor.set(0.5);
+  shootText.x = 100;
+  shootText.y = 50;
+  shootPanel.addChild(shootText);
+
+  info.addChild(shootPanel); // Додаємо панель лічильника до основного контейнера
+
+  return shootPanel;
+};
+/*
+export const setUfoCount = (count) => {
+  ufoCount = count;
+  ufoText.text = `${ufoCount}`;
+};*/
+
+export const updateTimerDisplay = (gameState) => {
+  let lastTime = 0; // зберігаємо час останнього оновлення
+
+  gameState.app.ticker.add((delta) => {
+    lastTime += delta; // додаємо час, що пройшов з останнього кадру
+
+    // Перевірка, чи пройшла хоча б одна секунда (залежно від FPS)
+    if (lastTime >= 60) { // 60 кадрів на секунду (можливо, буде потрібно налаштувати залежно від FPS)
+      if (time > 0) {
+        time -= 1;
+        timerText.text = `${time}`;
+      }
+      lastTime = 0; // скидаємо лічильник
+    }
+  });
+};
+
+export const initTimer = () => {
+  const timer = new Container();
+  timer.position.x = 20; // Розташування на екрані
+  timer.position.y = 420; // Встановлення вертикальної позиції
+
+  const graphics = new Graphics();
+  graphics.lineStyle(1, 0xff00ff, 1);
+  graphics.beginFill(0x650a5a, 0.25);
+  graphics.drawRoundedRect(0, 0, 150, 100, 16);
+  graphics.endFill();
+  timer.addChild(graphics);
+
+  const clock = new Sprite(getTexture(allTextureKeys.hourglass));
+  clock.anchor.set(0, 0.5);
+  clock.scale.set(0.09);
+  clock.name = "bullet";
+  clock.x = 30;
+  clock.y = 45;
+
+  timer.addChild(clock);
+
+  timerText = new Text(`${time}`, style); // Використовуємо той самий стиль, як і для UFO
+  timerText.anchor.set(0.5);
+  timerText.x = 100;
+  timerText.y = 50;
+  timer.addChild(timerText);
+
+
+  info.addChild(timer); // Додаємо панель лічильника до основного контейнера
+
+  return timer;
+}
+
+EventHub.on(appConstants.events.updateShootCount, (event) => {
+  shootCount -= 1;
+  shootText.text = `${shootCount}`;
 });
 
 EventHub.on(appConstants.events.ufoDestroyed, (event) => {
@@ -203,5 +278,4 @@ EventHub.on(appConstants.events.resetUfo, (event) => {
   ufoCount = 4;
   ufoText.text = `${ufoCount}`;
 });
-
 

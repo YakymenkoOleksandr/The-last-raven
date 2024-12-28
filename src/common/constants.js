@@ -11,18 +11,20 @@ const appConstants = {
         bombs: 'bombs',
         explosions: 'explosions',
         infoPanel: 'infoPanel',
+        asteroids: 'asteroids',
+        timer: 'timer,'
         
     },
     events: {
         bombDestroyed: 'bombDestroyed',
         infoUpdated: 'indoUpdated',
         ufoDestroyed: 'ufoDestroyed',
-        manKilled: 'manKilled',
+        updateShootCount: 'updateShootCount',
         youWin: 'youWin',
         gameOver: 'gameOver',
         restartGame: 'restartGame',
         resetUfo: 'resetUfo',
-        
+        timer: 'timer',
     },
     timeouts: {
         playerLock: 2000,

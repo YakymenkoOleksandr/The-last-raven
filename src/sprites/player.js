@@ -3,6 +3,9 @@ import { getTexture } from '../common/assets'
 import appConstants from '../common/constants'
 import { allTextureKeys } from '../common/textures'
 import { addBullet } from './bullets'
+import { shootCount } from '../sprites/infoPanel.js'
+import {updateShootCount} from '../common/eventHub'
+import { getGameOver } from './messages.js'
 
 let player
 let app
@@ -25,7 +28,7 @@ export const addPlayer = (currApp, root) => {
 export const getPlayer = () => player
 
 export const lockPlayer = () => {
-    if(lockTimeout){
+    if (lockTimeout) {
         return 
     }
     player.locked = true
@@ -33,12 +36,24 @@ export const lockPlayer = () => {
         lockTimeout = null
         player.locked = false
     }, appConstants.timeouts.playerLock)
+
+
 }
 
 export const playerShoots = () => {
-    if(!lockTimeout){
-        addBullet({x: player.position.x, y: player.position.y})
+    // Перевірка, чи гравець заблокований (lockTimeout існує)
+    if (lockTimeout || shootCount <= 0) {
+        return; // Якщо гравець заблокований, не виконувати постріл
     }
+
+    
+    
+    // Якщо гравець не заблокований, додаємо кулю
+    addBullet({ x: player.position.x, y: player.position.y });
+    
+    // Оновлення лічильника пострілів
+    updateShootCount();
+
 }
 
 export const playerTick = (state) => {
@@ -49,6 +64,7 @@ export const playerTick = (state) => {
     }
 
     const playerPosition = player.position.x;
+    
 
     // Оновлення позиції гравця за допомогою миші
     player.position.x = state.mousePosition;
@@ -60,12 +76,5 @@ export const playerTick = (state) => {
         player.position.x = appConstants.size.WIDTH - 20; // Права межа
     }
 
-    // Обертання гравця в залежності від напрямку руху
-    /*if (player.position.x < playerPosition) {
-        player.rotation = -0.3;
-    } else if (player.position.x > playerPosition) {
-        player.rotation = 0.3;
-    } else {
-        player.rotation = 0;
-    }*/
+    
 };

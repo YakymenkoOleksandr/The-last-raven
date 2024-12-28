@@ -19,11 +19,12 @@ import {
 import { bombTick, clearBombs, destroyBomb, initBombs } from "./sprites/bombs.js";
 import { checkCollision, destroySprite } from "./common/utils.js";
 import { explosionTick, initExplosions } from "./sprites/explosions.js";
-import { initInfo } from "./sprites/infoPanel.js";
-import { EventHub, resetUfo } from "./common/eventHub.js";
+import { initInfo, initTimer } from "./sprites/infoPanel.js";
+import { EventHub, gameOver, resetUfo } from "./common/eventHub.js";
 import { play } from "./common/sound";
 import { getYouWin, getGameOver } from "./sprites/messages.js";
-import { setUfoCount } from './sprites/infoPanel'
+import { initShootCounter, updateTimerDisplay } from './sprites/infoPanel'
+import { asteroidTick, initAsteroids, addAsteroid } from "./sprites/asteroids.js";
 
 
 const WIDTH = appConstants.size.WIDTH;
@@ -52,7 +53,7 @@ const createScene = () => {
   rootContainer.hitArea = app.screen;
 
   const backgroundTexture = PIXI.Texture.from(
-    "../public/assets/sprites/ui/space.jpg"
+    "/assets/sprites/ui/space.jpg"
   );
   const background = new PIXI.Sprite(backgroundTexture);
 
@@ -62,6 +63,9 @@ const createScene = () => {
   rootContainer.addChild(background);
 
   initInfo(app, rootContainer);
+  initShootCounter(app, rootContainer);
+  initTimer(app, rootContainer)
+  updateTimerDisplay(gameState);
 
   const bullets = initBullets(app, rootContainer);
   rootContainer.addChild(bullets);
@@ -76,6 +80,13 @@ const createScene = () => {
   const bombs = initBombs(app, rootContainer);
   rootContainer.addChild(bombs);
 
+  const asteroids = initAsteroids(app, rootContainer);
+  rootContainer.addChild(asteroids)
+  for (let i = 0; i < 10; i++) {
+  addAsteroid();
+  }
+  
+
   initExplosions(app, rootContainer);
 
   return app;
@@ -87,6 +98,7 @@ const checkAllCollisions = () => {
   const bullets = rootContainer.getChildByName(appConstants.containers.bullets);
   const bombs = rootContainer.getChildByName(appConstants.containers.bombs);
   const player = rootContainer.getChildByName(appConstants.containers.player);
+  const asteroids = rootContainer.getChildByName(appConstants.containers.asteroids)
 
   if (enemies && bullets) {
     // Перевіряємо чи зіткнулися обєкти противника та кулі
@@ -138,10 +150,25 @@ const checkAllCollisions = () => {
       destroyBomb(b);
     });
   }
+  if (bullets && asteroids) {
+    const toRemove = [];
+    bullets.children.forEach((b) => {
+      asteroids.children.forEach((asteroid) => {
+        if (asteroid && b) {
+          if (checkCollision(asteroid, b)) {
+            toRemove.push(b);
+            toRemove.push(asteroid);
+          }
+        }
+      });
+    });
+    toRemove.forEach((sprite) => {
+      sprite.destroyMe()
+    });
+  }
 };
 
 const initInteraction = () => {
-  console.log("initInteraction");
   gameState.mousePosition = getPlayer().position.x;
 
   gameState.app.stage.addEventListener("pointermove", (e) => {
@@ -161,6 +188,7 @@ const initInteraction = () => {
     enemyTick();
     bombTick();
     explosionTick();
+    asteroidTick();
     checkAllCollisions();
   });
 };

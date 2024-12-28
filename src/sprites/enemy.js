@@ -38,7 +38,6 @@ export const destroyEnemy = (enemy) => {
 export const addEnemy = () => {
   const textures = [
     getTexture(allTextureKeys.wariorSpaseShip),
-    getTexture(allTextureKeys.wariorSpaseShip),
   ];
   const enemy = new AnimatedSprite(textures);
   enemy.anchor.set(0.5, 1);
