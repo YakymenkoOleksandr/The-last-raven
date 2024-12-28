@@ -11,6 +11,12 @@ let player
 let app
 let lockTimeout
 
+let moveDirection = 0; // Напрямок руху: -1 (вліво), 1 (вправо), 0 (зупинка)
+const playerSpeed = 5; // Швидкість руху гравця
+
+let canShoot = true; // Чи може гравець стріляти
+const shootCooldown = 1000; // Затримка між пострілами в мілісекундах
+
 export const addPlayer = (currApp, root) => {
     if(player){
         return player
@@ -22,6 +28,9 @@ export const addPlayer = (currApp, root) => {
     player.scale.set(0.15)
     player.position.x = appConstants.size.WIDTH / 2
     player.position.y = appConstants.size.HEIGHT - 200
+
+    setupKeyboardControls();
+
     return player
 }
 
@@ -41,20 +50,30 @@ export const lockPlayer = () => {
 }
 
 export const playerShoots = () => {
-    // Перевірка, чи гравець заблокований (lockTimeout існує)
-    if (lockTimeout || shootCount <= 0) {
-        return; // Якщо гравець заблокований, не виконувати постріл
+    // 
+    if (shootCount <= 0) {
+      const gameOverWindow = getGameOver(); // Отримуємо вікно Game Over
+      app.stage.addChild(gameOverWindow); // Додаємо його на сцену
+      return;
     }
 
-    
-    
+    // Перевірка, чи гравець заблокований або не може стріляти
+    if (lockTimeout || shootCount <= 0 || !canShoot) {
+        return;
+    }
+
     // Якщо гравець не заблокований, додаємо кулю
     addBullet({ x: player.position.x, y: player.position.y });
-    
+
     // Оновлення лічильника пострілів
     updateShootCount();
 
-}
+    // Встановлюємо затримку перед наступним пострілом
+    canShoot = false;
+    setTimeout(() => {
+        canShoot = true; // Гравець може знову стріляти через 1 секунду
+    }, shootCooldown);
+};
 
 export const playerTick = (state) => {
     if (lockTimeout) {
@@ -63,18 +82,33 @@ export const playerTick = (state) => {
         player.alpha = 1;
     }
 
-    const playerPosition = player.position.x;
-    
-
-    // Оновлення позиції гравця за допомогою миші
-    player.position.x = state.mousePosition;
-
-    // Перевірка, щоб гравець не виходив за межі екрану (ліва та права межі)
-    if (player.position.x < 20) {
-        player.position.x = 20; // Ліва межа
-    } else if (player.position.x > appConstants.size.WIDTH - 20) {
-        player.position.x = appConstants.size.WIDTH - 20; // Права межа
+    // Рух гравця на основі напрямку
+    if (moveDirection !== 0) {
+        player.position.x += moveDirection * playerSpeed;
     }
 
-    
+    // Обмеження руху гравця в межах екрану
+    if (player.position.x < 20) {
+        player.position.x = 20;
+    } else if (player.position.x > appConstants.size.WIDTH - 20) {
+        player.position.x = appConstants.size.WIDTH - 20;
+    }
 };
+
+// Налаштування обробки клавіш
+const setupKeyboardControls = () => {
+    window.addEventListener("keydown", (event) => {
+        if (event.code === "ArrowLeft") {
+            moveDirection = -1; // Рух вліво
+        } else if (event.code === "ArrowRight") {
+            moveDirection = 1; // Рух вправо
+        }
+    });
+
+    window.addEventListener("keyup", (event) => {
+        if (event.code === "ArrowLeft" || event.code === "ArrowRight") {
+            moveDirection = 0; // Зупиняємо рух, якщо стрілка відпущена
+        }
+    });
+};
+

@@ -20,7 +20,7 @@ import { bombTick, clearBombs, destroyBomb, initBombs } from "./sprites/bombs.js
 import { checkCollision, destroySprite } from "./common/utils.js";
 import { explosionTick, initExplosions } from "./sprites/explosions.js";
 import { initInfo, initTimer } from "./sprites/infoPanel.js";
-import { EventHub, gameOver, resetUfo } from "./common/eventHub.js";
+import { EventHub, gameOver, resetUfo, resetShootCountAndTime } from "./common/eventHub.js";
 import { play } from "./common/sound";
 import { getYouWin, getGameOver } from "./sprites/messages.js";
 import { initShootCounter, updateTimerDisplay } from './sprites/infoPanel'
@@ -207,7 +207,7 @@ const restartGame = () => {
   clearBombs()
   clearBullets() 
   resetUfo()
-
+  resetShootCountAndTime()
 }
 
 EventHub.on(appConstants.events.youWin, () => {

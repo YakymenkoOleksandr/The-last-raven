@@ -25,6 +25,7 @@ const appConstants = {
         restartGame: 'restartGame',
         resetUfo: 'resetUfo',
         timer: 'timer',
+        resetShootCountAndTime: 'resetShootCountAndTime',
     },
     timeouts: {
         playerLock: 2000,

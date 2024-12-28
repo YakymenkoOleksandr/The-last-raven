@@ -33,3 +33,6 @@ export const resetUfo = (data) => {
 export const timer = (data) => {
   EventHub.emit(appConstants.events.timer, data)
 }
+export const resetShootCountAndTime = (data) => {
+  EventHub.emit(appConstants.events.resetShootCountAndTime, data);
+};

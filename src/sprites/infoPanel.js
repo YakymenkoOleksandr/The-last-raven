@@ -20,7 +20,7 @@ let musicOffStatus = true;
 let effectsOff;
 let effectsOffStatus = true;
 
-export let shootCount = 10;
+export let shootCount = 20;
 let shootText;
 
 let time = 60; 
@@ -32,6 +32,7 @@ export const setUfoCount = (count) => {
   ufoCount = count;
   ufoText.text = `${ufoCount}`;
 };
+
 
 const style = new TextStyle({
   fontFamily: "Arial",
@@ -205,25 +206,30 @@ export const initShootCounter = () => {
 
   return shootPanel;
 };
-/*
-export const setUfoCount = (count) => {
-  ufoCount = count;
-  ufoText.text = `${ufoCount}`;
-};*/
 
 export const updateTimerDisplay = (gameState) => {
-  let lastTime = 0; // зберігаємо час останнього оновлення
+  let lastTime = 0; // Зберігаємо час останнього оновлення
 
   gameState.app.ticker.add((delta) => {
-    lastTime += delta; // додаємо час, що пройшов з останнього кадру
+    lastTime += delta; // Додаємо час, що пройшов з останнього кадру
 
-    // Перевірка, чи пройшла хоча б одна секунда (залежно від FPS)
-    if (lastTime >= 60) { // 60 кадрів на секунду (можливо, буде потрібно налаштувати залежно від FPS)
+    // Перевірка, чи пройшла хоча б одна секунда
+    if (lastTime >= 60) { // 60 кадрів на секунду (налаштувати залежно від FPS)
       if (time > 0) {
         time -= 1;
         timerText.text = `${time}`;
       }
-      lastTime = 0; // скидаємо лічильник
+
+      // Якщо таймер досяг 0, вивести вікно Game Over
+      if (time === 0) {
+        const gameOverWindow = getGameOver(); // Отримуємо вікно Game Over
+        app.stage.addChild(gameOverWindow); // Додаємо його на сцену
+
+        // Зупиняємо оновлення таймера
+        gameState.app.ticker.stop(); 
+      }
+
+      lastTime = 0; // Скидаємо лічильник
     }
   });
 };
@@ -279,3 +285,8 @@ EventHub.on(appConstants.events.resetUfo, (event) => {
   ufoText.text = `${ufoCount}`;
 });
 
+// Слухач для оновлення значень
+EventHub.on(appConstants.events.resetShootCountAndTime, () => {
+  shootCount = 20;
+  time = 60;
+});
