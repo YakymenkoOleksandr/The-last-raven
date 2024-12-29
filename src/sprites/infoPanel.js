@@ -20,7 +20,7 @@ let musicOffStatus = true;
 let effectsOff;
 let effectsOffStatus = true;
 
-export let shootCount = 1;
+export let shootCount = 10;
 let shootText;
 
 let time = 60; 

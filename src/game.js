@@ -131,7 +131,8 @@ const checkAllCollisions = () => {
   const asteroids = rootContainer.getChildByName(
     appConstants.containers.asteroids
   );
-
+  console.log(asteroids);
+  
   if (enemies && bullets) {
     // Перевіряємо чи зіткнулися обєкти противника та кулі
     const toRemove = [];

@@ -83,7 +83,10 @@ export const addAsteroid = () => {
     );
     asteroid.animationSpeed = 0.1;
     asteroid.scale.set(Math.random() * 0.2 + 0.1); // Різний розмір
-    asteroid.rotationSpeed = Math.random() * 0.05 - 0.025; // Різна швидкість обертання
+
+    // Різна швидкість обертання в випадкових напрямках (як за годинниковою, так і проти годинникової стрілки)
+    asteroid.rotationSpeed = Math.random() * 0.05 - 0.025; // Випадкове значення між -0.025 і 0.025
+
     asteroid.lastShotTime = Date.now();
 
     // Перевірка колізії з іншими астероїдами
