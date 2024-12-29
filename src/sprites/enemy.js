@@ -16,7 +16,7 @@ let lastStateChange = Date.now(); // Час останньої зміни ста
 const MOVE_DURATION = 2000; // Тривалість руху (мс)
 const STOP_DURATION = 1000; // Тривалість зупинки (мс)
 let moveDirection = 1; // Напрямок руху (1 - вправо, -1 - вліво)
-const MOVE_SPEED = 2; // Швидкість руху
+const MOVE_SPEED = 2.5; // Швидкість руху
 
 export const initEnemies = (currApp, root) => {
   enemies = new Container();
@@ -24,6 +24,17 @@ export const initEnemies = (currApp, root) => {
   app = currApp;
   rootContainer = root;
   return enemies;
+};
+
+export const clearEnemies = () => {
+  const toRemuve = []; 
+  enemies.children.forEach((en) => {
+    toRemuve.push(en);
+  }); 
+  toRemuve.forEach((en) => {
+    enemies.removeChild(en);
+    en.destroy({ children: true });
+  }); 
 };
 
 export const destroyEnemy = (enemy) => {
@@ -85,7 +96,7 @@ export const enemyTick = () => {
       enemy.x += MOVE_SPEED * moveDirection;
 
       const now = Date.now();
-      if (now - enemy.lastShotTime >= 2000) {
+      if (now - enemy.lastShotTime >= 1000) {
         // Стріляємо кожні 2 секунди
         addBomb(enemy.position); // Передаємо позицію ворога як аргумент
         enemy.lastShotTime = now;

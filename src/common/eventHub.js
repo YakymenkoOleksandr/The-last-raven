@@ -20,7 +20,6 @@ export const updateShootCount = (data) => {
   EventHub.emit(appConstants.events.updateShootCount, data);
 };
 export const youWin = (data) => {
-  console.log("You Win event triggered", data);
   EventHub.emit(appConstants.events.youWin, data);
 };
 export const restartGame = (data) => {
@@ -36,3 +35,10 @@ export const timer = (data) => {
 export const resetShootCountAndTime = (data) => {
   EventHub.emit(appConstants.events.resetShootCountAndTime, data);
 };
+
+export const boss = (data) => {
+  EventHub.emit(appConstants.events.boss)
+}
+
+
+

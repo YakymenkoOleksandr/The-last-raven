@@ -2,7 +2,12 @@ import * as PIXI from "pixi.js";
 import { root } from "postcss";
 import { loadAssets } from "./common/assets";
 import appConstants from "./common/constants";
-import { bulletTick, clearBullets, destroyBullet, initBullets } from "./sprites/bullets";
+import {
+  bulletTick,
+  clearBullets,
+  destroyBullet,
+  initBullets,
+} from "./sprites/bullets";
 import {
   addPlayer,
   getPlayer,
@@ -15,28 +20,53 @@ import {
   addEnemy,
   enemyTick,
   destroyEnemy,
+  clearEnemies,
 } from "./sprites/enemy.js";
-import { bombTick, clearBombs, destroyBomb, initBombs } from "./sprites/bombs.js";
+import {
+  bombTick,
+  clearBombs,
+  destroyBomb,
+  initBombs,
+} from "./sprites/bombs.js";
 import { checkCollision, destroySprite } from "./common/utils.js";
 import { explosionTick, initExplosions } from "./sprites/explosions.js";
 import { initInfo, initTimer } from "./sprites/infoPanel.js";
-import { EventHub, gameOver, resetUfo, resetShootCountAndTime } from "./common/eventHub.js";
+import {
+  EventHub,
+  gameOver,
+  resetUfo,
+  resetShootCountAndTime,
+  youWin,
+  boss,
+} from "./common/eventHub.js";
 import { play } from "./common/sound";
-import { getYouWin, getGameOver } from "./sprites/messages.js";
-import { initShootCounter, updateTimerDisplay } from './sprites/infoPanel'
-import { asteroidTick, initAsteroids, addAsteroid } from "./sprites/asteroids.js";
-
+import {
+  getYouWin,
+  getGameOver,
+  createMassegeGetReadyBoss,
+} from "./sprites/messages.js";
+import { initShootCounter, updateTimerDisplay } from "./sprites/infoPanel";
+import {
+  asteroidTick,
+  initAsteroids,
+  clearAsteroids,
+  addAsteroid,
+} from "./sprites/asteroids.js";
 
 const WIDTH = appConstants.size.WIDTH;
 const HEIGHT = appConstants.size.HEIGHT;
 
-const gameState = {
+export const gameState = {
   stopped: false,
   moveLeftActive: false,
   moveRightActive: false,
+  enemyAdded: false,
+  enemyAdded: false,
 };
 
-let rootContainer;
+export let destroyedAsteroids = 0;
+
+export let rootContainer;
 
 const createScene = () => {
   const app = new PIXI.Application({
@@ -52,9 +82,7 @@ const createScene = () => {
   rootContainer.interactive = true;
   rootContainer.hitArea = app.screen;
 
-  const backgroundTexture = PIXI.Texture.from(
-    "/assets/sprites/ui/space.jpg"
-  );
+  const backgroundTexture = PIXI.Texture.from("/assets/sprites/ui/space.png");
   const background = new PIXI.Sprite(backgroundTexture);
 
   background.width = WIDTH;
@@ -64,7 +92,7 @@ const createScene = () => {
 
   initInfo(app, rootContainer);
   initShootCounter(app, rootContainer);
-  initTimer(app, rootContainer)
+  initTimer(app, rootContainer);
   updateTimerDisplay(gameState);
 
   const bullets = initBullets(app, rootContainer);
@@ -73,23 +101,25 @@ const createScene = () => {
   const player = addPlayer(app, rootContainer);
   rootContainer.addChild(player);
 
-  const enemies = initEnemies(app, rootContainer);
-  addEnemy();
-  rootContainer.addChild(enemies);
-
   const bombs = initBombs(app, rootContainer);
   rootContainer.addChild(bombs);
 
   const asteroids = initAsteroids(app, rootContainer);
-  rootContainer.addChild(asteroids)
-  for (let i = 0; i < 10; i++) {
-  addAsteroid();
-  }
-  
+  rootContainer.addChild(asteroids);
+  createAsteroids();
+
+  const enemies = initEnemies(app, rootContainer);
+  rootContainer.addChild(enemies);
 
   initExplosions(app, rootContainer);
 
   return app;
+};
+
+export const createAsteroids = () => {
+  for (let i = 0; i < 10; i++) {
+    addAsteroid();
+  }
 };
 
 const checkAllCollisions = () => {
@@ -98,7 +128,9 @@ const checkAllCollisions = () => {
   const bullets = rootContainer.getChildByName(appConstants.containers.bullets);
   const bombs = rootContainer.getChildByName(appConstants.containers.bombs);
   const player = rootContainer.getChildByName(appConstants.containers.player);
-  const asteroids = rootContainer.getChildByName(appConstants.containers.asteroids)
+  const asteroids = rootContainer.getChildByName(
+    appConstants.containers.asteroids
+  );
 
   if (enemies && bullets) {
     // Перевіряємо чи зіткнулися обєкти противника та кулі
@@ -116,24 +148,24 @@ const checkAllCollisions = () => {
       });
     });
     toRemove.forEach((sprite) => {
-      sprite.destroyMe()
+      sprite.destroyMe();
     });
   }
   if (bombs && bullets) {
-      // Перевіряємо чи зіткнулися обєкти пострілу противника та пострілу гравця
-      const toRemove = [];
+    // Перевіряємо чи зіткнулися обєкти пострілу противника та пострілу гравця
+    const toRemove = [];
     bombs.children.forEach((bomb) => {
       bullets.children.forEach((b) => {
-          if (checkCollision(bomb, b)) {
-              toRemove.push(b)
-              toRemove.push(bomb)
-        //  destroyBullet(b); // Видаляємо кулю
-        //  destroyBomb(bomb); // Видаляємо ворога
+        if (checkCollision(bomb, b)) {
+          toRemove.push(b);
+          toRemove.push(bomb);
+          //  destroyBullet(b); // Видаляємо кулю
+          //  destroyBomb(bomb); // Видаляємо ворога
         }
       });
     });
-      toRemove.forEach((sprite) => {
-      sprite.destroyMe()
+    toRemove.forEach((sprite) => {
+      sprite.destroyMe();
     });
   }
   if (player && bombs) {
@@ -158,13 +190,41 @@ const checkAllCollisions = () => {
           if (checkCollision(asteroid, b)) {
             toRemove.push(b);
             toRemove.push(asteroid);
+            destroyedAsteroids += 1;
           }
         }
       });
     });
     toRemove.forEach((sprite) => {
-      sprite.destroyMe()
+      sprite.destroyMe();
     });
+  }
+  if (bullets && asteroids) {
+    const toRemove = [];
+    bullets.children.forEach((b) => {
+      asteroids.children.forEach((asteroid) => {
+        if (asteroid && b) {
+          if (checkCollision(asteroid, b)) {
+            toRemove.push(b);
+            toRemove.push(asteroid);
+          }
+        }
+      });
+    });
+    toRemove.forEach((sprite) => {
+      sprite.destroyMe();
+    });
+  }
+
+  // Якщо всі астероїди знищені, додаємо ворога лише один раз
+  if (asteroids.children.length === 0 && !gameState.enemyAdded) {
+    createMassegeGetReadyBoss();
+    setTimeout(() => {
+      resetShootCountAndTime();
+      addEnemy();
+    }, 2000);
+    gameState.enemyAdded = true; // Позначаємо, що ворога додано
+    destroyedAsteroids = 0; // Скидаємо лічильник
   }
 };
 
@@ -185,10 +245,10 @@ const initInteraction = () => {
     // Даний код оновлює те, що відбвається на екрані
     playerTick(gameState);
     bulletTick();
+    asteroidTick();
     enemyTick();
     bombTick();
     explosionTick();
-    asteroidTick();
     checkAllCollisions();
   });
 };
@@ -202,35 +262,37 @@ export const initGame = () => {
   });
 };
 
-
 const restartGame = () => {
-  clearBombs()
-  clearBullets() 
-  resetUfo()
-  resetShootCountAndTime()
-}
+  clearBombs();
+  clearBullets();
+  clearAsteroids();
+  clearEnemies(); // Очищати обєкти при рестарті це прям імба
+  resetShootCountAndTime();
+  createAsteroids();
+  resetUfo();
+  gameState.enemyAdded = false;
+  destroyedAsteroids = 0;
+};
 
 EventHub.on(appConstants.events.youWin, () => {
-  gameState.app.ticker.stop()
-  rootContainer.addChild(getYouWin())
-  setTimeout(()=>play(appConstants.sounds.youWin), 1000)
-})
+  gameState.app.ticker.stop();
+  rootContainer.addChild(getYouWin());
+  setTimeout(() => play(appConstants.sounds.youWin), 1000);
+});
 
 EventHub.on(appConstants.events.gameOver, () => {
-  gameState.app.ticker.stop()
-  rootContainer.addChild(getGameOver())
-  setTimeout(()=>play(appConstants.sounds.gameOver), 1000)
-})
+  gameState.app.ticker.stop();
+  rootContainer.addChild(getGameOver());
+  setTimeout(() => play(appConstants.sounds.gameOver), 1000);
+});
 
 EventHub.on(appConstants.events.restartGame, (event) => {
-  
-  restartGame()
-  if(event === appConstants.events.gameOver){
-    rootContainer.removeChild(getGameOver())
-
+  restartGame();
+  if (event === appConstants.events.gameOver) {
+    rootContainer.removeChild(getGameOver());
   }
-  if(event === appConstants.events.youWin){
-    rootContainer.removeChild(getYouWin())
+  if (event === appConstants.events.youWin) {
+    rootContainer.removeChild(getYouWin());
   }
-  gameState.app.ticker.start()
-})
+  gameState.app.ticker.start();
+});

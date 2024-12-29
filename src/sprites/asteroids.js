@@ -4,9 +4,14 @@ import { Container, AnimatedSprite } from "pixi.js";
 import appConstants from "../common/constants";
 import { addBomb } from "./bombs";
 import { addExposion } from "./explosions";
-import { destroySprite, randomIntFromInterval, checkCollision } from "../common/utils";
-
-
+import {
+  destroySprite,
+  randomIntFromInterval,
+  checkCollision,
+} from "../common/utils";
+import { addEnemy } from "./enemy";
+import { gameState } from "../game.js";
+import { createMassegeGetReadyBoss } from "../sprites/messages.js";
 
 let asteroids;
 let app;
@@ -18,6 +23,17 @@ export const initAsteroids = (currApp, root) => {
   app = currApp;
   rootContainer = root;
   return asteroids;
+};
+
+export const clearAsteroids = () => {
+  const toRemuve = []; 
+  asteroids.children.forEach((a) => {
+    toRemuve.push(a);
+  }); 
+  toRemuve.forEach((a) => {
+    asteroids.removeChild(a);
+    a.destroy({ children: true });
+  }); 
 };
 
 export const destroyEnemy = (asteroid) => {
@@ -49,16 +65,22 @@ export const addAsteroid = () => {
   const randomTexture = textures[Math.floor(Math.random() * textures.length)];
 
   let asteroid;
-    let positionIsValid = false;
-    const minDistanceFromEdge = 50;
+  let positionIsValid = false;
+  const minDistanceFromEdge = 50;
 
   // Генерація астероїда, поки не знайдемо вільну позицію
   while (!positionIsValid) {
     // Створення астероїда
     asteroid = new AnimatedSprite([randomTexture]);
     asteroid.anchor.set(0.5, 0.5);
-    asteroid.x = randomIntFromInterval(minDistanceFromEdge, appConstants.size.WIDTH - 20);
-    asteroid.y = randomIntFromInterval(minDistanceFromEdge, appConstants.size.HEIGHT - 280);
+    asteroid.x = randomIntFromInterval(
+      minDistanceFromEdge,
+      appConstants.size.WIDTH - 20
+    );
+    asteroid.y = randomIntFromInterval(
+      minDistanceFromEdge,
+      appConstants.size.HEIGHT - 280
+    );
     asteroid.animationSpeed = 0.1;
     asteroid.scale.set(Math.random() * 0.2 + 0.1); // Різний розмір
     asteroid.rotationSpeed = Math.random() * 0.05 - 0.025; // Різна швидкість обертання
@@ -84,4 +106,7 @@ export const asteroidTick = (state) => {
       asteroid.rotation += 0.01;
     });
   }
+
 };
+
+

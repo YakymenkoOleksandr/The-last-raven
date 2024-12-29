@@ -12,7 +12,8 @@ const appConstants = {
         explosions: 'explosions',
         infoPanel: 'infoPanel',
         asteroids: 'asteroids',
-        timer: 'timer,'
+        timer: 'timer',
+        createMassegeGetReadyBoss: 'createMassegeGetReadyBoss'
         
     },
     events: {
@@ -26,6 +27,8 @@ const appConstants = {
         resetUfo: 'resetUfo',
         timer: 'timer',
         resetShootCountAndTime: 'resetShootCountAndTime',
+        createMassegeGetReadyBoss: 'createMassegeGetReadyBoss',
+        boss: 'boss'
     },
     timeouts: {
         playerLock: 2000,

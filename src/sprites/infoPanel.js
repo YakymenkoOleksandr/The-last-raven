@@ -20,7 +20,7 @@ let musicOffStatus = true;
 let effectsOff;
 let effectsOffStatus = true;
 
-export let shootCount = 20;
+export let shootCount = 1;
 let shootText;
 
 let time = 60; 
@@ -287,6 +287,7 @@ EventHub.on(appConstants.events.resetUfo, (event) => {
 
 // Слухач для оновлення значень
 EventHub.on(appConstants.events.resetShootCountAndTime, () => {
-  shootCount = 20;
+  shootCount = 10;
   time = 60;
+  shootText.text = `${shootCount}`;
 });
