@@ -7,6 +7,7 @@ import {
   clearBullets,
   destroyBullet,
   initBullets,
+  
 } from "./sprites/bullets";
 import {
   addPlayer,
@@ -21,6 +22,7 @@ import {
   enemyTick,
   destroyEnemy,
   clearEnemies,
+  
 } from "./sprites/enemy.js";
 import {
   bombTick,
@@ -56,15 +58,17 @@ import {
 const WIDTH = appConstants.size.WIDTH;
 const HEIGHT = appConstants.size.HEIGHT;
 
-export const gameState = {
+export const gameState = { // Обєкт з данними, який передається в різні частини програми
   stopped: false,
   moveLeftActive: false,
   moveRightActive: false,
   enemyAdded: false,
-  enemyAdded: false,
+  shootCountChecked: false, // Прапорець для перевірки набоїв
+  gameOverWindowShown: false, // Прапорець для перевірки, чи вже відображено вікно Game Over
+  destroyedAsteroids: 0,
+  shotsOutOfScreen: 0,
+  shootCount: 10,
 };
-
-export let destroyedAsteroids = 0;
 
 export let rootContainer;
 
@@ -131,7 +135,6 @@ const checkAllCollisions = () => {
   const asteroids = rootContainer.getChildByName(
     appConstants.containers.asteroids
   );
-  console.log(asteroids);
   
   if (enemies && bullets) {
     // Перевіряємо чи зіткнулися обєкти противника та кулі
@@ -191,7 +194,7 @@ const checkAllCollisions = () => {
           if (checkCollision(asteroid, b)) {
             toRemove.push(b);
             toRemove.push(asteroid);
-            destroyedAsteroids += 1;
+            gameState.destroyedAsteroids += 1;
           }
         }
       });
@@ -225,7 +228,7 @@ const checkAllCollisions = () => {
       addEnemy();
     }, 2000);
     gameState.enemyAdded = true; // Позначаємо, що ворога додано
-    destroyedAsteroids = 0; // Скидаємо лічильник
+    gameState.destroyedAsteroids = 0; // Скидаємо лічильник
   }
 };
 
@@ -264,15 +267,20 @@ export const initGame = () => {
 };
 
 const restartGame = () => {
+  // Очищати обєкти при рестарті необзідно для уникнення помилок
   clearBombs();
   clearBullets();
   clearAsteroids();
-  clearEnemies(); // Очищати обєкти при рестарті це прям імба
+  clearEnemies(); 
   resetShootCountAndTime();
   createAsteroids();
   resetUfo();
   gameState.enemyAdded = false;
-  destroyedAsteroids = 0;
+  gameState.destroyedAsteroids = 0;
+  gameState.gameOverWindowShown = false;
+  gameState.shootCountChecked = false;
+  gameState.shootCount = 10;
+  gameState.shotsOutOfScreen = 0;
 };
 
 EventHub.on(appConstants.events.youWin, () => {

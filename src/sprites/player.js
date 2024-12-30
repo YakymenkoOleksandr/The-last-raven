@@ -3,10 +3,10 @@ import { getTexture } from "../common/assets";
 import appConstants from "../common/constants";
 import { allTextureKeys } from "../common/textures";
 import { addBullet } from "./bullets";
-import { shootCount } from "../sprites/infoPanel.js";
 import { updateShootCount } from "../common/eventHub";
 import { getGameOver } from "./messages.js";
-import { destroyedAsteroids } from "../game.js";
+import { gameState } from "../game.js";
+
 
 let player;
 let app;
@@ -17,9 +17,6 @@ const playerSpeed = 5; // Швидкість руху гравця
 
 let canShoot = true; // Чи може гравець стріляти
 const shootCooldown = 1000; // Затримка між пострілами в мілісекундах
-
-let shootCountChecked = false; // Прапорець для перевірки набоїв
-let gameOverWindowShown = false; // Прапорець для перевірки, чи вже відображено вікно Game Over
 
 export const addPlayer = (currApp, root) => {
   if (player) {
@@ -53,7 +50,7 @@ export const lockPlayer = () => {
 
 export const playerShoots = () => {
   // Перевірка, чи гравець заблокований або не може стріляти
-  if (lockTimeout || shootCount <= 0 || !canShoot) {
+  if (lockTimeout || gameState.shootCount <= 0 || !canShoot) {
     return;
   }
 
@@ -90,18 +87,18 @@ export const playerTick = (state) => {
   }
 
   // Перевірка кількості пострілів
-  if (shootCount === 0 && !shootCountChecked && !gameOverWindowShown) {
+  if (gameState.shootCount === 0 && gameState.shotsOutOfScreen > 0 && !gameState.shootCountChecked  && !gameState.gameOverWindowShown) {
     // Використовуємо setTimeout для відкладеної перевірки через 2 секунди
     setTimeout(() => {
-      if (destroyedAsteroids < 10) {
+      if (gameState.destroyedAsteroids < 10) {
         const gameOverWindow = getGameOver(); // Отримуємо вікно Game Over
         app.stage.addChild(gameOverWindow); // Додаємо його на сцену
-        gameOverWindowShown = true; // Встановлюємо прапорець, щоб не показувати вікно знову
+        gameState.gameOverWindowShown  = true; // Встановлюємо прапорець, щоб не показувати вікно знову
       }
-      shootCountChecked = false; // Скидаємо прапорець після перевірки
-    }, 2000);
+      gameState.shootCountChecked  = false; // Скидаємо прапорець після перевірки
+    }, 1500);
 
-    shootCountChecked = true; // Встановлюємо прапорець, щоб перевірка відбулася лише один раз
+    gameState.shootCountChecked  = true; // Встановлюємо прапорець, щоб перевірка відбулася лише один раз
     return; // Додаємо return, щоб уникнути подальших перевірок в цьому циклі
   }
 };

@@ -2,6 +2,7 @@ import { AnimatedSprite, Texture, Container, filters } from "pixi.js";
 import appConstants from "../common/constants";
 import { play } from "../common/sound";
 import { destroySprite } from "../common/utils";
+import { gameState } from "../game";
 
 let app;
 let bullets;
@@ -28,7 +29,7 @@ export const clearBullets = () => {
 
 export const addBullet = (coord) => {
   if (timeout) {
-    play(appConstants.sounds.miss)
+    play(appConstants.sounds.miss);
     return;
   }
 
@@ -67,7 +68,7 @@ export const addBullet = (coord) => {
 
   bullets.addChild(bullet);
   bullet.play();
-  play(appConstants.sounds.shot)
+  play(appConstants.sounds.shot);
 
   timeout = setTimeout(() => {
     timeout = null;
@@ -75,7 +76,7 @@ export const addBullet = (coord) => {
 };
 
 export const destroyBullet = (bullet) => {
- destroySprite(bullet)
+  destroySprite(bullet);
 };
 
 export const bulletTick = () => {
@@ -83,6 +84,7 @@ export const bulletTick = () => {
   bullets.children.forEach((b) => {
     b.position.y -= bulletSpeed * 2;
     if (b.position.y < 0) {
+      gameState.shotsOutOfScreen++;
       toRemove.push(b);
     }
   });
@@ -91,3 +93,5 @@ export const bulletTick = () => {
     b.destroy({ children: true });
   });
 };
+
+

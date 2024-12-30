@@ -5,6 +5,7 @@ import { EventHub, gameOver, youWin } from "../common/eventHub";
 import { muteEffects, pause, play, unMuteEffects } from "../common/sound";
 import appTextures, { allTextureKeys } from "../common/textures";
 import { getGameOver } from "./messages";
+import { gameState } from "../game";
 
 let info;
 let app;
@@ -20,7 +21,6 @@ let musicOffStatus = true;
 let effectsOff;
 let effectsOffStatus = true;
 
-export let shootCount = 10;
 let shootText;
 
 let time = 60; 
@@ -196,7 +196,7 @@ export const initShootCounter = () => {
 
   shootPanel.addChild(bullet);
 
-  shootText = new Text(`${shootCount}`, style); // Використовуємо той самий стиль, як і для UFO
+  shootText = new Text(`${gameState.shootCount}`, style); // Використовуємо той самий стиль, як і для UFO
   shootText.anchor.set(0.5);
   shootText.x = 100;
   shootText.y = 50;
@@ -268,8 +268,8 @@ export const initTimer = () => {
 }
 
 EventHub.on(appConstants.events.updateShootCount, (event) => {
-  shootCount -= 1;
-  shootText.text = `${shootCount}`;
+  gameState.shootCount -= 1;
+  shootText.text = `${gameState.shootCount}`;
 });
 
 EventHub.on(appConstants.events.ufoDestroyed, (event) => {
@@ -287,7 +287,7 @@ EventHub.on(appConstants.events.resetUfo, (event) => {
 
 // Слухач для оновлення значень
 EventHub.on(appConstants.events.resetShootCountAndTime, () => {
-  shootCount = 10;
+  gameState.shootCount = 10;
   time = 60;
-  shootText.text = `${shootCount}`;
+  shootText.text = `${gameState.shootCount}`;
 });
