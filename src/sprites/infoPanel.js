@@ -9,30 +9,20 @@ import { gameState } from "../game";
 
 let info;
 let app;
-
 let ufoText;
-
-let ufoCount = 4;
-
-
 let musicOff;
 let musicOffStatus = true;
-
 let effectsOff;
 let effectsOffStatus = true;
-
 let shootText;
-
-let time = 60; 
-let timerText 
-
+let time = 60;
+let timerText;
 
 // Функція для оновлення лічильника ворогів
 export const setUfoCount = (count) => {
-  ufoCount = count;
-  ufoText.text = `${ufoCount}`;
+  gameState.ufoCount = count;
+  ufoText.text = `${gameState.ufoCount}`;
 };
-
 
 const style = new TextStyle({
   fontFamily: "Arial",
@@ -214,7 +204,8 @@ export const updateTimerDisplay = (gameState) => {
     lastTime += delta; // Додаємо час, що пройшов з останнього кадру
 
     // Перевірка, чи пройшла хоча б одна секунда
-    if (lastTime >= 60) { // 60 кадрів на секунду (налаштувати залежно від FPS)
+    if (lastTime >= 60) {
+      // 60 кадрів на секунду (налаштувати залежно від FPS)
       if (time > 0) {
         time -= 1;
         timerText.text = `${time}`;
@@ -226,7 +217,7 @@ export const updateTimerDisplay = (gameState) => {
         app.stage.addChild(gameOverWindow); // Додаємо його на сцену
 
         // Зупиняємо оновлення таймера
-        gameState.app.ticker.stop(); 
+        gameState.app.ticker.stop();
       }
 
       lastTime = 0; // Скидаємо лічильник
@@ -261,11 +252,10 @@ export const initTimer = () => {
   timerText.y = 50;
   timer.addChild(timerText);
 
-
   info.addChild(timer); // Додаємо панель лічильника до основного контейнера
 
   return timer;
-}
+};
 
 EventHub.on(appConstants.events.updateShootCount, (event) => {
   gameState.shootCount -= 1;
@@ -273,16 +263,16 @@ EventHub.on(appConstants.events.updateShootCount, (event) => {
 });
 
 EventHub.on(appConstants.events.ufoDestroyed, (event) => {
-  ufoCount -= 1;
-  ufoText.text = `${ufoCount}`;
-  if (ufoCount === 0) {
+  gameState.ufoCount -= 1;
+  ufoText.text = `${gameState.ufoCount}`;
+  if (gameState.ufoCount === 0) {
     youWin();
   }
 });
 
 EventHub.on(appConstants.events.resetUfo, (event) => {
-  ufoCount = 4;
-  ufoText.text = `${ufoCount}`;
+  gameState.ufoCount = 4;
+  ufoText.text = `${gameState.ufoCount}`;
 });
 
 // Слухач для оновлення значень

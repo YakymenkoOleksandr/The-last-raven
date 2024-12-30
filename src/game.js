@@ -68,6 +68,7 @@ export const gameState = { // Обєкт з данними, який перед�
   destroyedAsteroids: 0,
   shotsOutOfScreen: 0,
   shootCount: 10,
+  ufoCount: 4
 };
 
 export let rootContainer;
@@ -281,6 +282,7 @@ const restartGame = () => {
   gameState.shootCountChecked = false;
   gameState.shootCount = 10;
   gameState.shotsOutOfScreen = 0;
+  gameState.ufoCount = 4;
 };
 
 EventHub.on(appConstants.events.youWin, () => {
