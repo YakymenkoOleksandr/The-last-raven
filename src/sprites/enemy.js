@@ -101,7 +101,7 @@ export const enemyTick = () => {
       enemy.x += MOVE_SPEED * moveDirection;
 
       const now = Date.now();
-      if (now - enemy.lastShotTime >= 1000) {
+      if (now - enemy.lastShotTime >= 2000) {
         // Стріляємо кожні 2 секунди
         addBomb(enemy.position); // Передаємо позицію ворога як аргумент
         enemy.lastShotTime = now;
