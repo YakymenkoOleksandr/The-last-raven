@@ -1,11 +1,14 @@
 import { allTextureKeys } from "../common/textures";
 import { getTexture } from "../common/assets";
-import { Container, AnimatedSprite } from "pixi.js";
+import { Graphics, Container, AnimatedSprite } from "pixi.js";
 import appConstants from "../common/constants";
 import { addBomb } from "./bombs";
 import { addExposion } from "./explosions";
 import { destroySprite } from "../common/utils";
 import { ufoDestroyed } from "../common/eventHub";
+import { addHP, clearHP } from "./HP.js";
+
+
 
 let enemies;
 let app;
@@ -40,6 +43,7 @@ export const clearEnemies = () => {
 export const destroyEnemy = (enemy) => {
   addExposion({ x: enemy.position.x, y: enemy.position.y });
   destroySprite(enemy)
+   clearHP()
   ufoDestroyed()
   setTimeout(() => {
     addEnemy();
@@ -57,11 +61,12 @@ export const addEnemy = () => {
   enemy.animationSpeed = 0.1;
   enemy.scale.set(0.15);
   enemy.lastShotTime = Date.now();
-
   enemy.destroyMe = function () {
     destroyEnemy(this);
   };
   enemies.addChild(enemy);
+
+  addHP(enemy);
 
   return enemy;
 };

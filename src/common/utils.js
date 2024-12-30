@@ -18,6 +18,9 @@ export const randomIntFromInterval = (min, max) => {
 };
 
 export const destroySprite = (sprite) => {
-  sprite.parent.removeChild(sprite);
-  sprite.destroy({ children: true });
+  if (!sprite || !sprite.parent) {
+        console.error('Sprite or parent is undefined:', sprite);
+        return;
+    }
+    sprite.parent.removeChild(sprite);
 };

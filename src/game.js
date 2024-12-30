@@ -54,6 +54,7 @@ import {
   clearAsteroids,
   addAsteroid,
 } from "./sprites/asteroids.js";
+import {initHP, updateHealthBars, destroyHP, clearHP} from "./sprites/HP.js"
 
 const WIDTH = appConstants.size.WIDTH;
 const HEIGHT = appConstants.size.HEIGHT;
@@ -68,7 +69,8 @@ export const gameState = { // Обєкт з данними, який перед�
   destroyedAsteroids: 0,
   shotsOutOfScreen: 0,
   shootCount: 10,
-  ufoCount: 4
+  ufoCount: 4,
+  numberOfAsteroids: 10,
 };
 
 export let rootContainer;
@@ -116,13 +118,16 @@ const createScene = () => {
   const enemies = initEnemies(app, rootContainer);
   rootContainer.addChild(enemies);
 
+  const HP = initHP(app, rootContainer);
+  rootContainer.addChild(HP)
+
   initExplosions(app, rootContainer);
 
   return app;
 };
 
 export const createAsteroids = () => {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < gameState.numberOfAsteroids; i++) {
     addAsteroid();
   }
 };
@@ -254,6 +259,7 @@ const initInteraction = () => {
     enemyTick();
     bombTick();
     explosionTick();
+    updateHealthBars();
     checkAllCollisions();
   });
 };
@@ -272,6 +278,7 @@ const restartGame = () => {
   clearBombs();
   clearBullets();
   clearAsteroids();
+  clearHP();
   clearEnemies(); 
   resetShootCountAndTime();
   createAsteroids();
@@ -283,6 +290,7 @@ const restartGame = () => {
   gameState.shootCount = 10;
   gameState.shotsOutOfScreen = 0;
   gameState.ufoCount = 4;
+
 };
 
 EventHub.on(appConstants.events.youWin, () => {

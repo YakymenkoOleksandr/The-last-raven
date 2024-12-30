@@ -1,4 +1,4 @@
-const appConstants = {
+export const appConstants = {
   size: {
     WIDTH: window.innerWidth ? window.innerWidth : 1280,
     HEIGHT: window.innerHeight ? window.innerHeight : 720,
@@ -13,6 +13,7 @@ const appConstants = {
     asteroids: "asteroids",
     timer: "timer",
     createMassegeGetReadyBoss: "createMassegeGetReadyBoss",
+    HP: "HP",
   },
   events: {
     bombDestroyed: "bombDestroyed",
