@@ -22,7 +22,7 @@ const style = new TextStyle({
 
 // Вікно сповіщення про програш
 const gameOverMessage = new Container();
-gameOverMessage.interactive = true;
+gameOverMessage.eventMode = 'dynamic';
 
 const graphics = new Graphics();
 graphics.lineStyle(1, 0xff00ff, 1);
@@ -52,7 +52,7 @@ export const getGameOver = () => {
 // Вікно сповіщення про виграш
 
 const youWinMessages = new Container();
-youWinMessages.interactive = true;
+youWinMessages.eventMode = 'static';
 
 const graphics2 = new Graphics();
 graphics2.lineStyle(1, 0xff00ff, 1);
@@ -82,7 +82,7 @@ export const getYouWin = () => {
 // Вікно сповіщення про наближення боса
 
 const getReadyBoss = new Container();
-getReadyBoss.interactive = true;
+getReadyBoss.eventMode = 'static';
 
 const graphics3 = new Graphics();
 graphics3.lineStyle(1, 0xff00ff, 1);

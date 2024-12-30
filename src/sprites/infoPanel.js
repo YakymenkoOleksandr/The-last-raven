@@ -6,14 +6,15 @@ import { muteEffects, pause, play, unMuteEffects } from "../common/sound";
 import appTextures, { allTextureKeys } from "../common/textures";
 import { getGameOver } from "./messages";
 import { gameState } from "../game";
+import {initializeSounds} from "../common/sound.js"
 
 let info;
 let app;
 let ufoText;
 let musicOff;
-let musicOffStatus = false;
+let musicOffStatus = true;
 let effectsOff;
-let effectsOffStatus = false;
+let effectsOffStatus = true;
 let shootText;
 let time = 60;
 let timerText;
@@ -108,8 +109,9 @@ export const initInfo = (currApp, root) => {
   musicOff.y = -9;
   musicOff.name = "musicOff";
   musicButton.addChild(musicOff);
-  musicButton.interactive = true;
+  musicButton.eventMode = 'dynamic';
   musicButton.on("pointertap", () => {
+    initializeSounds();
     musicOffStatus = !musicOffStatus;
     musicOff.texture = musicOffStatus ? musicOffTexture : musicOnTexture;
     if (musicOffStatus) {
@@ -146,8 +148,9 @@ export const initInfo = (currApp, root) => {
   effectsOff.y = -9;
   effectsOff.name = "effectsOff";
   effectsButton.addChild(effectsOff);
-  effectsButton.interactive = true;
+  effectsButton.eventMode = 'dynamic';
   effectsButton.on("pointertap", () => {
+    initializeSounds();
     effectsOffStatus = !effectsOffStatus;
     effectsOff.texture = effectsOffStatus
       ? effectsOffTexture

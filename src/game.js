@@ -86,7 +86,7 @@ const createScene = () => {
   document.body.appendChild(app.view);
   gameState.app = app;
   rootContainer = app.stage;
-  rootContainer.interactive = true;
+  rootContainer.eventMode = 'dynamic';
   rootContainer.hitArea = app.screen;
 
   const backgroundTexture = PIXI.Texture.from("/assets/sprites/ui/space.png");
